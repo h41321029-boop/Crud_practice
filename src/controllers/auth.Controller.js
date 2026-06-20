@@ -46,12 +46,12 @@ async function loginController(req,res){
 
     const finduser =await User.findOne({email})
     if (!finduser){
-        res.send(404).json({
+        return res.status(404).json({
             success:false,
             message:"User Not Found"
         })
     }
-    const isMatch = bcrypt.compare(password,User.password)
+    const isMatch =await bcrypt.compare(password,finduser.password)
     if (!isMatch){
         res.status(400).json({
             success:false,
@@ -60,7 +60,7 @@ async function loginController(req,res){
     }
     const token =  jwt.sign(
         {
-            id:User._id
+            id:finduser._id
         },
         process.env.JWT_SECRET,
         {
